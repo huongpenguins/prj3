@@ -1,0 +1,1 @@
+{"nI": 43, "units": 32, "history": 200, "kernel": 3, "layers": 4, "activation": "relu", "optimizer": "adam", "verbose": 1, "best_theta": 1.254824223752768, "best_window": 3}
