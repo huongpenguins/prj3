@@ -49,7 +49,6 @@ from tensorflow.keras.models import load_model
 # Custom packages
 from detector import autoencoder, lstm, cnn, dnn, gru, identity, linear
 from data_loader import load_train_data, load_test_data
-q
 import metrics
 import utils
 
@@ -282,6 +281,8 @@ def hyperparameter_search(event_detector, model_type, config, Xval, Xtest, Ytest
             try:
                 np.save(f'npys/{run_name}/{model_name}-{metric}.npy', metric_vals)
                 print(f'Saved metric at npys/{run_name}/{model_name}-{metric}.npy')
+                
+                
             except FileNotFoundError:
                 np.save(f'npys/results/{model_name}-{metric}.npy', metric_vals)
                 if firstPlotsError:

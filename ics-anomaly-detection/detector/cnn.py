@@ -21,6 +21,9 @@ import json
 import numpy as np
 import pdb
 import tensorflow as tf
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
 
 # Ignore ugly futurewarnings from np vs tf.
 import warnings
@@ -164,10 +167,36 @@ class ConvNN(ICSDetector):
         train_history = self.inner.fit(data_generator(Xtrain, Ytrain, batch_size), **train_params)
         
         # Save losses to CSV
-        if self.params['verbose'] > 0:        
-            loss_obj = np.vstack([train_history.history['loss'], train_history.history['val_loss']])
-            np.savetxt(f'cnn-train-history-{self.params["layers"]}l-{self.params["units"]}u.csv', loss_obj, delimiter=',', fmt='%.5f')
-
+        # if self.params['verbose'] > 0:  
+        if True:      
+            # loss_obj = np.vstack([train_history.history['loss'], train_history.history['val_loss']])
+            # np.savetxt(f'cnn-train-history-{self.params["layers"]}l-{self.params["units"]}u.csv', loss_obj, delimiter=',', fmt='%.5f')
+            train_loss = train_history.history['loss'] 
+            val_loss = train_history.history['val_loss'] 
+            history = self.params['history']
+            epochs = range(1, len(train_loss)+1) 
+            
+            df = pd.DataFrame({'epoch': epochs,
+                               'train_loss': train_loss,
+                               'val_loss': val_loss })
+            save_dir = f'history/cnn-train-history-{self.params["layers"]}l-{self.params["units"]}u-{history}h'
+            os.makedirs(save_dir, exist_ok=True)
+            csv_path = f'{save_dir}/cnn-train-history-{self.params["layers"]}l-{self.params["units"]}u-{history}h.csv' 
+            df.to_csv(csv_path, index=False)
+            
+            plt.figure(figsize=(8,5)) 
+            plt.plot(df['epoch'].values, df['train_loss'].values, 'bo-', label='Training loss') 
+            plt.plot(df['epoch'].values, df['val_loss'].values, 'ro-', label='Validation loss') 
+            plt.xlabel('Epoch') 
+            plt.ylabel('Loss') 
+            plt.title('CNN Training and Validation Loss') 
+            plt.legend() 
+            plt.grid(True) 
+            plt.tight_layout() 
+            plot_path = os.path.join(save_dir, f'cnn-train-history-{self.params["layers"]}l-{self.params["units"]}u-{history}h.png') 
+            plt.savefig(plot_path, dpi=300, bbox_inches='tight') 
+            plt.close()
+            
     def train_by_idx(self, Xfull, train_idxs, val_idxs, use_callbacks=False, **train_params):
         """ Train CNN, but do indexing in batches
 
@@ -218,10 +247,37 @@ class ConvNN(ICSDetector):
         train_history = self.inner.fit(data_generator(Xfull, train_idxs, batch_size), **train_params)
         
         # Save losses to CSV
-        if self.params['verbose'] > 0:        
-            loss_obj = np.vstack([train_history.history['loss'], train_history.history['val_loss']])
-            np.savetxt(f'cnn-train-history-{self.params["layers"]}l-{self.params["units"]}u.csv', loss_obj, delimiter=',', fmt='%.5f')
-
+        # if self.params['verbose'] > 0:        
+        #     loss_obj = np.vstack([train_history.history['loss'], train_history.history['val_loss']])
+        #     np.savetxt(f'cnn-train-history-{self.params["layers"]}l-{self.params["units"]}u.csv', loss_obj, delimiter=',', fmt='%.5f')
+        if True:      
+            # loss_obj = np.vstack([train_history.history['loss'], train_history.history['val_loss']])
+            # np.savetxt(f'cnn-train-history-{self.params["layers"]}l-{self.params["units"]}u.csv', loss_obj, delimiter=',', fmt='%.5f')
+            train_loss = train_history.history['loss'] 
+            val_loss = train_history.history['val_loss'] 
+            epochs = range(1, len(train_loss)+1) 
+            history = self.params['history']
+            
+            df = pd.DataFrame({'epoch': epochs,
+                               'train_loss': train_loss,
+                               'val_loss': val_loss })
+            save_dir = f'history/cnn-train-history-{self.params["layers"]}l-{self.params["units"]}u-{history}h'
+            os.makedirs(save_dir, exist_ok=True)
+            csv_path = f'{save_dir}/cnn-train-history-{self.params["layers"]}l-{self.params["units"]}u-{history}h.csv' 
+            df.to_csv(csv_path, index=False)
+            
+            plt.figure(figsize=(8,5)) 
+            plt.plot(df['epoch'].values, df['train_loss'].values, 'bo-', label='Training loss') 
+            plt.plot(df['epoch'].values, df['val_loss'].values, 'ro-', label='Validation loss') 
+            plt.xlabel('Epoch') 
+            plt.ylabel('Loss') 
+            plt.title('CNN Training and Validation Loss') 
+            plt.legend() 
+            plt.grid(True) 
+            plt.tight_layout() 
+            plot_path = os.path.join(save_dir, f'cnn-train-history-{self.params["layers"]}l-{self.params["units"]}u-{history}h.png') 
+            plt.savefig(plot_path, dpi=300, bbox_inches='tight') 
+            plt.close()
 
     def detect(self, x, theta, window = 1, batches=False, eval_batch_size = 4096, **keras_params):
         """ Detection performed based on (smoothed) reconstruction errors.

@@ -24,6 +24,7 @@ import sys
 import json
 import pickle
 import time
+import csv
 
 # Data science ML
 import pandas as pd 
@@ -262,7 +263,8 @@ if __name__ == "__main__":
     Xtesttest_errors = event_detector.reconstruction_errors(Xtest_test, batches=do_batches)
 
     overall_values = []
-
+    summary_rows = []
+    
     for hp_metric in hp_metrics:
 
         # Note: For models to be used in explanations, change the hyperparameter evaluation to use more data (such as test_split=0.01) for cleaner results
@@ -289,12 +291,51 @@ if __name__ == "__main__":
             verbose=0)
 
         overall_values.append({hp_metric : final_values})
-
+        model_params = config.get('model',{})
+        
+        row = { "Dataset": dataset_name,    
+                "Model_Type": model_type,
+                "Layer": model_params.get('layers', 'N/A'),
+                "Unit": model_params.get('units', 'N/A'),
+                "History_Length": model_params.get('history', 'N/A'),
+                "Model_Name": model_name, 
+                "Optimization_Metric": hp_metric, 
+                "Best_Percentile": bestp, 
+                "Best_Window": bestw }
+        
+        summary_row = row.copy()
+        for val_dict in final_values: 
+            
+            summary_row.update(val_dict) 
+            
+            compare_filepath = f'compare/{dataset_name}-{hp_metric}_hp_metric-{val_dict.keys()}_hp_eval.csv'
+            compare_row = row.copy()
+            compare_row.update(val_dict)
+            
+            with open(compare_filepath, 'a', newline ='', encoding='utf-8-sig') as file:
+                writer = csv.DictWriter(file, fieldnames=compare_row.keys())
+                if file.tell() == 0:
+                    writer.writeheader()
+                writer.writerow(compare_row)
+        summary_rows.append(row)
+        
+    summary_df = pd.DataFrame(summary_rows)
+    
+    output_dir = f"outputs/{run_name}"
+    os.makedirs(output_dir, exist_ok=True)
+    
+    csv_path = f"{output_dir}/{model_name}-model-tuning-scores.csv" 
+    print(csv_path)
+    
+        
     try:
         np.save(f'outputs/{run_name}/{model_name}-model-tuning-scores.npy', overall_values)
+        summary_df.to_csv(csv_path, index=False)
         print(f'Saved output to {run_name}/{model_name}-model-tuning-scores.npy')
     except FileNotFoundError:
         np.save(f'outputs/results/{model_name}-model-tuning-scores.npy', overall_values)
+        summary_df.to_csv(f'outputs/results/{model_name}-model-tuning-scores.csv', index=False)
+        
         print(f"Unable to find outputs/{run_name}/, saved {model_name}-model-tuning-scores.npy to outputs/results/ instead")
         print(f"Note: we recommend creating outputs/{run_name}/ to store this output")
 

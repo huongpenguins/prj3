@@ -20,6 +20,9 @@
 import json
 import numpy as np
 import pdb
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
 
 # Ignore ugly futurewarnings from np vs tf.
 import warnings
@@ -135,9 +138,37 @@ class AEED(ICSDetector):
         train_history = self.inner.fit(x, x, **train_params)
         
         # Save losses to CSV
-        if self.params['verbose'] > 0:        
-            loss_obj = np.vstack([train_history.history['loss'], train_history.history['val_loss']])
-            np.savetxt(f'ae-train-history-{self.params["nH"]}l-{self.params["cf"]}u.csv', loss_obj, delimiter=',', fmt='%.5f')
+        # if self.params['verbose'] > 0:  
+        if True:       
+            #loss_obj = np.vstack([train_history.history['loss'], train_history.history['val_loss']])
+            train_loss = train_history.history['loss'] 
+            val_loss = train_history.history['val_loss'] 
+            epochs = range(1, len(train_loss)+1)
+            
+            df = pd.DataFrame({'epoch': epochs, 
+                               'train_loss': train_loss, 
+                               'val_loss': val_loss })
+            
+            save_dir = f'history/ae-train-history-{self.params["nH"]}l-{self.params["cf"]}u'
+            os.makedirs(save_dir, exist_ok=True)
+            csv_path = f'{save_dir}/ae-train-history-{self.params["nH"]}l-{self.params["cf"]}u.csv' 
+            df.to_csv(csv_path, index=False)
+            
+            # ve bieu do
+            plt.figure(figsize=(8,5)) 
+            plt.plot(df['epoch'].values, df['train_loss'].values, 'bo-', label='Training loss') 
+            plt.plot(df['epoch'].values, df['val_loss'].values, 'ro-', label='Validation loss') 
+            plt.xlabel('Epoch') 
+            plt.ylabel('Loss') 
+            plt.title('Training and Validation Loss') 
+            plt.legend() 
+            plt.grid(True) 
+            plt.tight_layout() 
+            plot_path = os.path.join(save_dir, f'ae-train-history-{self.params["nH"]}l-{self.params["cf"]}u.png') 
+            plt.savefig(plot_path, dpi=300, bbox_inches='tight') 
+            plt.close()
+            
+            #np.savetxt(f'ae-train-history-{self.params["nH"]}l-{self.params["cf"]}u.csv', loss_obj, delimiter=',', fmt='%.5f')
 
     def detect(self, x, theta, window = 1, batches=False, **keras_params):
         """ Detection performed based on (smoothed) reconstruction errors.

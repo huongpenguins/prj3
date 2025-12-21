@@ -120,8 +120,7 @@ def load_test_data(dataset_name, scaler=None, no_transform=False, verbose=False)
     if dataset_name  == 'BATADAL':
         try:
             df_test = pd.read_csv("data/" + dataset_name + "/test_dataset_1.csv", parse_dates = ['DATETIME'], dayfirst=True)
-            if len(df_train) > MAX_SAMPLES:
-                df_train = df_train.iloc[:MAX_SAMPLES]
+
         except FileNotFoundError:
             raise SystemExit("Unable to find BATADAL test dataset. Did you unpack BATADAL.tar.gz?")
         sensor_cols = [col for col in df_test.columns if col not in ['Unnamed: 0', 'DATETIME', 'ATT_FLAG']]
@@ -130,8 +129,7 @@ def load_test_data(dataset_name, scaler=None, no_transform=False, verbose=False)
     elif dataset_name == 'SWAT':
         try:
             df_test = pd.read_csv("data/" + dataset_name + "/SWATv0_test.csv")
-            if len(df_train) > MAX_SAMPLES:
-                df_train = df_train.iloc[:MAX_SAMPLES]
+
         except FileNotFoundError:
             raise SystemExit("Unable to find SWAT test dataset. Did you request the dataset and process it?")
         sensor_cols = [col for col in df_test.columns if col not in ['Timestamp', 'Normal/Attack']]
@@ -140,8 +138,7 @@ def load_test_data(dataset_name, scaler=None, no_transform=False, verbose=False)
     elif dataset_name == 'SWAT-CLEAN':
         try:
             df_test = pd.read_csv("data/SWAT/SWATv0_test.csv")
-            if len(df_train) > MAX_SAMPLES:
-                df_train = df_train.iloc[:MAX_SAMPLES]
+
         except FileNotFoundError:
             raise SystemExit("Unable to find SWAT test dataset. Did you request the dataset and process it?")
         remove_list = ['Timestamp', 'Normal/Attack', 'P202', 'P401', 'P404', 'P502', 'P601', 'P603']
@@ -152,8 +149,7 @@ def load_test_data(dataset_name, scaler=None, no_transform=False, verbose=False)
     elif dataset_name == 'WADI':
         try:
             df_test = pd.read_csv("data/" + dataset_name + "/WADI_test.csv")
-            if len(df_train) > MAX_SAMPLES:
-                df_train = df_train.iloc[:MAX_SAMPLES]
+
         except FileNotFoundError:
             raise SystemExit("Unable to find WADI test dataset. Did you request the dataset and process it?")
         remove_list = ['Row', 'Date', 'Time', 'Attack', '2B_AIT_002_PV', '2_LS_001_AL', '2_LS_002_AL', '2_P_001_STATUS', '2_P_002_STATUS']
@@ -163,8 +159,7 @@ def load_test_data(dataset_name, scaler=None, no_transform=False, verbose=False)
     elif dataset_name == 'WADI-CLEAN':
         try:
             df_test = pd.read_csv("data/WADI/WADI_test.csv")
-            if len(df_train) > MAX_SAMPLES:
-                df_train = df_train.iloc[:MAX_SAMPLES]
+
         except FileNotFoundError:
             raise SystemExit("Unable to find WADI test dataset. Did you request the dataset and process it?")
         remove_list = ['Row', 'Date', 'Time', 'Attack', '2B_AIT_002_PV', '2_LS_001_AL', '2_LS_002_AL', '2_P_001_STATUS', '2_P_002_STATUS']
