@@ -25,7 +25,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
-MAX_SAMPLES = 10000
+MAX_SAMPLES = 50000
 
 def load_train_data(dataset_name, scaler=None, train_shuffle=True, no_transform=False, verbose=False):
 

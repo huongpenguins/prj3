@@ -81,6 +81,7 @@ class AEED(ICSDetector):
         optimizer = self.params['optimizer'] # Keras optimizer
         verbose = self.params['verbose'] # echo on screen
 
+       
         # get number/size of hidden layers for encoder and decoder
         temp = np.linspace(nI,nI/cf,nH + 1).astype(int)
         nH_enc = temp[1:]

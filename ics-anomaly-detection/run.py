@@ -22,6 +22,8 @@ for model_type in model_types:
 
                         run_name = f"exp_model{model_type}_{dataset}_{layer}layer_{unit}unit_{history}historyLen_3kernel"
                         run_name= run_name.replace(".","_")
+                        if os.path.exists(f"outputs/{run_name}"):
+                            continue
                         result = subprocess.run(
                         ["bash", "setup_run_name.sh", run_name],
                         check=False 
@@ -59,7 +61,7 @@ for model_type in model_types:
                             f"--{model_type}_model_params_kernel", "3",
                             f"--{model_type}_model_params_history", str(history),
                             "--detect_params_hp_metrics", "F1",
-                            "--detect_params_eval_metrics", "F1",
+                            "--detect_params_eval_metrics", "F1", "SF1", "SFB13", "SFB31",
                             "--eval_plots"
                         ], check=True)
     if model_type =="ae":
@@ -74,6 +76,8 @@ for model_type in model_types:
                     ["bash", "setup_run_name.sh", run_name],
                     check=False 
                     )
+                    if os.path.exists(f"models/{run_name}"):
+                            continue
                     if result.returncode != 0:
                         print(f"setup_run_name.sh lỗi với {run_name}")
                         continue
@@ -101,6 +105,6 @@ for model_type in model_types:
                         f"--{model_type}_model_params_layers", str(layer),
                         f"--{model_type}_model_params_cf", str(cf),
                         "--detect_params_hp_metrics", "F1",
-                        "--detect_params_eval_metrics", "F1",
+                        "--detect_params_eval_metrics", "F1", "SF1", "SFB13", "SFB31",
                         "--eval_plots"
                     ], check=True)

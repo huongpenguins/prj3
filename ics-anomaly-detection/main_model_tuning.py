@@ -308,7 +308,7 @@ if __name__ == "__main__":
             
             summary_row.update(val_dict) 
             
-            compare_filepath = f'compare/{dataset_name}-{hp_metric}_hp_metric-{val_dict.keys()}_hp_eval.csv'
+            compare_filepath = f'compare/{dataset_name}-{hp_metric}_hp_metric-{next(iter(val_dict))}_hp_eval.csv'
             compare_row = row.copy()
             compare_row.update(val_dict)
             
